@@ -1,2 +1,4 @@
 # Reflection-Star-
-2019年ゲーム大賞チーム制作&lt;Reflection Star(仮)>のリポジトリ
+## リポジトリ概要
+2019年ゲーム大賞チームP-LGの作品「Reflection Star(仮)」のリポジトリです。
+
