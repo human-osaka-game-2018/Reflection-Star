@@ -13,5 +13,24 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="GameLib">
+      <UniqueIdentifier>{f866fff7-2e33-4816-aca3-385c0dea8d00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameLib\DirectInput">
+      <UniqueIdentifier>{6602cc93-3ea0-46af-8db2-e5b8e116e79e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameLib\DirectInput\DirectInput.cpp">
+      <Filter>GameLib\DirectInput</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GameLib\DirectInput\DirectInput.h">
+      <Filter>GameLib\DirectInput</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
