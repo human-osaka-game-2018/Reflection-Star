@@ -1,5 +1,6 @@
 ﻿#include <windows.h>
 #include <mmsystem.h>
+#include <d3dx9.h>
 #include <tchar.h>
 #include <locale.h>
 
@@ -8,6 +9,19 @@ namespace window
 	const int Width = 1280;
 	const int Height = 720;
 }
+
+enum TEXTURE
+{
+	PlayerTex,
+	TexMax
+};
+
+//Directx関係----------------------------
+IDirect3DDevice9*	  g_pD3Device;		//	Direct3Dのデバイス
+D3DPRESENT_PARAMETERS g_D3dPresentParameters;		//	パラメータ
+D3DDISPLAYMODE		  g_D3DdisplayMode;
+IDirect3D9*			  g_pDirect3D;		//	Direct3Dのインターフェイス
+//---------------------------------------
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
 
@@ -32,7 +46,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	Wndclass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
 	Wndclass.lpszMenuName = NULL;
 	Wndclass.lpszClassName = "Reflection Star";	//クラス名
-									//Windowの登録
+	
+	//Windowの登録
 	RegisterClass(&Wndclass);
 
 	RECT Rect;
@@ -61,7 +76,44 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	);
 	if (!hWnd) return 0;
 
-	
+	//DirectX オブジェクトの生成
+	g_pDirect3D = Direct3DCreate9(
+		D3D_SDK_VERSION);
+
+	//Display Mode の設定
+	g_pDirect3D->GetAdapterDisplayMode(
+		D3DADAPTER_DEFAULT,
+		&g_D3DdisplayMode);
+
+	ZeroMemory(&g_D3dPresentParameters,
+		sizeof(D3DPRESENT_PARAMETERS));
+	g_D3dPresentParameters.BackBufferFormat = g_D3DdisplayMode.Format;
+	g_D3dPresentParameters.BackBufferCount = 1;
+	g_D3dPresentParameters.SwapEffect = D3DSWAPEFFECT_DISCARD;
+	g_D3dPresentParameters.Windowed = TRUE;
+
+	//デバイスを作る
+	g_pDirect3D->CreateDevice(
+		D3DADAPTER_DEFAULT,
+		D3DDEVTYPE_HAL,
+		hWnd,
+		D3DCREATE_SOFTWARE_VERTEXPROCESSING,
+		&g_D3dPresentParameters, &g_pD3Device);
+
+	//描画設定
+	g_pD3Device->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
+	g_pD3Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);  //SRCの設定
+	g_pD3Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+	g_pD3Device->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+	g_pD3Device->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+
+	g_pD3Device->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+	g_pD3Device->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+
+	//頂点に入れるデータを設定
+	g_pD3Device->SetFVF((D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1));
+
 	ZeroMemory(&msg, sizeof(msg));
 	while (msg.message != WM_QUIT)
 	{
@@ -79,7 +131,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	
 	return (int)msg.wParam;
 }
-
 
 /**
 *メッセージ処理
