@@ -114,6 +114,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	//頂点に入れるデータを設定
 	g_pD3Device->SetFVF((D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1));
 
+	DWORD SyncOld = timeGetTime();	//	システム時間を取得
+	DWORD SyncNow;
+
+	timeBeginPeriod(1);
 	ZeroMemory(&msg, sizeof(msg));
 	while (msg.message != WM_QUIT)
 	{
@@ -125,9 +129,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		}
 		else
 		{
-			
+			SyncNow = timeGetTime();
+			if (SyncNow - SyncOld >= 1000 / 60) //	1秒間に60回この中に入るはず
+			{
+				
+				SyncOld = SyncNow;
+			}
 		}
 	}
+	timeEndPeriod(1);
 	
 	return (int)msg.wParam;
 }
